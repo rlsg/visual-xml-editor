@@ -138,7 +138,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 }
                 else if (data is System.Xml.XmlDocument)
                 {
-                    new uk.co.rlsg.apps.tools.XmlEditorForm(title, data as System.Xml.XmlDocument).Show(this);
+                    new uk.co.rlsg.apps.xml_editor.XmlEditorForm(title, data as System.Xml.XmlDocument).Show(this);
                 }
                 else
                 {
@@ -173,7 +173,7 @@ namespace uk.co.rlsg.apps.xml_editor
             });
             if (newItem != null)
             {
-                var xmlDoc = new uk.co.rlsg.apps.tools.XmlEditorForm(listLabel).get();
+                var xmlDoc = new uk.co.rlsg.apps.xml_editor.XmlEditorForm(listLabel).get();
 
                 if (xmlDoc != null)
                 {
@@ -259,6 +259,7 @@ namespace uk.co.rlsg.apps.xml_editor
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            commitPlugins();
             foreach (var item in listViewFiles.SelectedItems.OfType<ListViewItem>())
             {
                 var xmlDoc = item.Tag as System.Xml.XmlDocument;
@@ -309,6 +310,7 @@ namespace uk.co.rlsg.apps.xml_editor
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            commitPlugins();
             foreach (var item in listViewFiles.SelectedItems.OfType<ListViewItem>())
             {
                 var xmlDoc = item.Tag as System.Xml.XmlDocument;
@@ -351,6 +353,7 @@ namespace uk.co.rlsg.apps.xml_editor
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            unloadPlugins();
             var last = Cursor.Current;
             Cursor.Current = Cursors.WaitCursor;
             try
@@ -385,7 +388,7 @@ namespace uk.co.rlsg.apps.xml_editor
 
         private void listViewFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            enablePlugins();
         }
 
         private void listViewFiles_ItemActivate(object sender, EventArgs e)
@@ -463,16 +466,45 @@ namespace uk.co.rlsg.apps.xml_editor
             loadPlugins();
         }
 
-        private void loadPlugins()
+        private void commitPlugins()
         {
-            var list = pluginsToolStripMenuItem.DropDownItems;
-
-            while (list.Count > 2)
+            try
             {
-                var item = list[2];
+                var list = pluginsToolStripMenuItem.DropDownItems;
 
-                try
+                foreach (var item in list.OfType<ToolStripMenuItem>().Skip(1))
                 {
+                    if (item.Tag is IPlugin)
+                    {
+                        var plugin = item.Tag as IPlugin;
+
+                        try
+                        {
+                            plugin.Commit();
+                        }
+                        catch (Exception err)
+                        {
+                            displayError(plugin, err);
+                        }
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                displayError(err);
+            }
+        }
+
+        private void unloadPlugins()
+        {
+            try
+            {
+                var list = pluginsToolStripMenuItem.DropDownItems;
+
+                while (list.Count > 2)
+                {
+                    var item = list[2];
+
                     if (item.Tag is IPlugin)
                     {
                         var plugin = item.Tag as IPlugin;
@@ -486,50 +518,89 @@ namespace uk.co.rlsg.apps.xml_editor
                             displayError(plugin, err);
                         }
                     }
-                }
-                catch(Exception err)
-                {
-                    displayError(err);
-                }
 
-                list.Remove(item);
+                    list.Remove(item);
+                }
             }
-
-            foreach (var path in Properties.Settings.Default.Plugins)
+            catch (Exception err)
             {
-                try
+                displayError(err);
+            }
+        }
+
+        private void enablePlugins()
+        {
+            try
+            {
+                var selectionCount = listViewFiles.SelectedItems.Count;
+                var list = pluginsToolStripMenuItem.DropDownItems;
+
+                foreach (var item in list.OfType<ToolStripMenuItem>().Skip(1))
                 {
-                    var _dll = System.Reflection.Assembly.LoadFile(path);
-
-                    if (_dll != null)
+                    if (item.Tag is IPlugin)
                     {
-                        var pluginList =
-                            (from _type in _dll.GetExportedTypes()
-                             where _type.IsClass && _type.IsInstanceOfType(typeof(IPlugin))
-                             orderby _type.Name
-                             select _type);
-                        foreach(var pluginType in pluginList)
-                        {
-                            var instance = _dll.CreateInstance(pluginType.Name) as IPlugin;
-                            if (instance != null)
-                            {
-                                var newPlugin = new ToolStripMenuItem
-                                {
-                                    Text = instance.Name,
-                                    ToolTipText = instance.Description,
-                                    Tag = instance,
-                                };
+                        var plugin = item.Tag as IPlugin;
 
-                                newPlugin.Click += launchPlugin_Click;
+                        item.Enabled = selectionCount >= 1;
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                displayError(err);
+            }
+        }
+
+        private void loadPlugins()
+        {
+            unloadPlugins();
+            try
+            {
+                var list = pluginsToolStripMenuItem.DropDownItems;
+
+                foreach (var path in Properties.Settings.Default.Plugins)
+                {
+                    try
+                    {
+                        var _dll = System.Reflection.Assembly.LoadFile(path);
+
+                        if (_dll != null)
+                        {
+                            var pluginList =
+                                (from _type in _dll.GetExportedTypes()
+                                 where _type.IsClass && _type.BaseType == typeof(PluginBase)
+                                 orderby _type.Name
+                                 select _type);
+                            foreach (var pluginType in pluginList)
+                            {
+                                var _instance = _dll.CreateInstance(pluginType.FullName);
+                                var instance = _instance as PluginBase;
+                                if (instance != null)
+                                {
+                                    var newPlugin = new ToolStripMenuItem
+                                    {
+                                        Text = instance.Name,
+                                        ToolTipText = instance.Description,
+                                        Tag = instance,
+                                    };
+
+                                    newPlugin.Click += launchPlugin_Click;
+                                    list.Add(newPlugin);
+                                }
                             }
                         }
                     }
-                }
-                catch (Exception err)
-                {
-                    displayError(path, err);
+                    catch (Exception err)
+                    {
+                        displayError(path, err);
+                    }
                 }
             }
+            catch (Exception err)
+            {
+                displayError(err);
+            }
+            enablePlugins();
         }
 
         private void launchPlugin_Click(object sender, EventArgs e)
@@ -560,6 +631,15 @@ namespace uk.co.rlsg.apps.xml_editor
             {
                 displayError(err);
             }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            loadPlugins();
         }
     }
 }

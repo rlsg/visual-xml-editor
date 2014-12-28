@@ -1,4 +1,4 @@
-﻿namespace uk.co.rlsg.apps.tools
+﻿namespace uk.co.rlsg.apps.xml_editor
 {
     partial class XmlEditorFormAttribute
     {

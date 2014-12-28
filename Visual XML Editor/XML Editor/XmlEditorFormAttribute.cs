@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace uk.co.rlsg.apps.tools
+namespace uk.co.rlsg.apps.xml_editor
 {
     public partial class XmlEditorFormAttribute : Form
     {

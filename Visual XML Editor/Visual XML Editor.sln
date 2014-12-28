@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Windows Desktop
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XML Editor", "XML Editor\XML Editor.csproj", "{33693B74-8996-4F02-A752-CEE3B457B3C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example XML Plugin", "Example XML Plugin\Example XML Plugin.csproj", "{A93A8A6A-00A9-4BA3-98E5-51834C628455}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{33693B74-8996-4F02-A752-CEE3B457B3C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33693B74-8996-4F02-A752-CEE3B457B3C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33693B74-8996-4F02-A752-CEE3B457B3C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A93A8A6A-00A9-4BA3-98E5-51834C628455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A93A8A6A-00A9-4BA3-98E5-51834C628455}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A93A8A6A-00A9-4BA3-98E5-51834C628455}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A93A8A6A-00A9-4BA3-98E5-51834C628455}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

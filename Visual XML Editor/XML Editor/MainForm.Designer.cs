@@ -44,15 +44,15 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xMLDiffGeneratorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pluginsManageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pluginListToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listViewFiles = new System.Windows.Forms.ListView();
             this.columnName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnLocation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pluginListToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.pluginsManageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -170,6 +170,27 @@
             this.xMLDiffGeneratorToolStripMenuItem.Text = "XML Diff Generator";
             this.xMLDiffGeneratorToolStripMenuItem.Click += new System.EventHandler(this.xMLDiffGeneratorToolStripMenuItem_Click);
             // 
+            // pluginsToolStripMenuItem
+            // 
+            this.pluginsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pluginsManageToolStripMenuItem,
+            this.pluginListToolStripSeparator});
+            this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
+            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.pluginsToolStripMenuItem.Text = "Plugins";
+            // 
+            // pluginsManageToolStripMenuItem
+            // 
+            this.pluginsManageToolStripMenuItem.Name = "pluginsManageToolStripMenuItem";
+            this.pluginsManageToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.pluginsManageToolStripMenuItem.Text = "Manage...";
+            this.pluginsManageToolStripMenuItem.Click += new System.EventHandler(this.pluginsManageToolStripMenuItem_Click);
+            // 
+            // pluginListToolStripSeparator
+            // 
+            this.pluginListToolStripSeparator.Name = "pluginListToolStripSeparator";
+            this.pluginListToolStripSeparator.Size = new System.Drawing.Size(123, 6);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -223,27 +244,6 @@
             this.contextMenuStrip.Name = "contextMenuStrip";
             this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
             // 
-            // pluginsToolStripMenuItem
-            // 
-            this.pluginsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.pluginsManageToolStripMenuItem,
-            this.pluginListToolStripSeparator});
-            this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
-            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.pluginsToolStripMenuItem.Text = "Plugins";
-            // 
-            // pluginListToolStripSeparator
-            // 
-            this.pluginListToolStripSeparator.Name = "pluginListToolStripSeparator";
-            this.pluginListToolStripSeparator.Size = new System.Drawing.Size(149, 6);
-            // 
-            // pluginsManageToolStripMenuItem
-            // 
-            this.pluginsManageToolStripMenuItem.Name = "pluginsManageToolStripMenuItem";
-            this.pluginsManageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.pluginsManageToolStripMenuItem.Text = "Manage...";
-            this.pluginsManageToolStripMenuItem.Click += new System.EventHandler(this.pluginsManageToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -256,6 +256,8 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Visual XML Editor";
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewFiles_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewFiles_DragEnter);
             this.menuStrip1.ResumeLayout(false);

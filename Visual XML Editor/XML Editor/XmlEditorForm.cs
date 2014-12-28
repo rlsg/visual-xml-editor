@@ -10,7 +10,7 @@ using System.Xml;
 using System.IO;
 
 
-namespace uk.co.rlsg.apps.tools
+namespace uk.co.rlsg.apps.xml_editor
 {
     /// <summary>
     /// This is an implementation of a very basic graphical

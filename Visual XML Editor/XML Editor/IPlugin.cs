@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace uk.co.rlsg.apps.xml_editor
 {
@@ -10,7 +11,7 @@ namespace uk.co.rlsg.apps.xml_editor
     /// <para>This interface defines how the Visual XML Editor
     /// will interact with plug-ins.</para>
     /// </summary>
-    interface IPlugin
+    public interface IPlugin
     {
         /// <summary>
         /// <para>This property is used for the Tool menu label and is
