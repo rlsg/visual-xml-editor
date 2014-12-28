@@ -10,7 +10,7 @@ using System.Xml;
 using System.IO;
 
 
-namespace uk.co.rlsg.apps.changeling
+namespace uk.co.rlsg.apps.tools
 {
     /// <summary>
     /// This is an implementation of a very basic graphical
@@ -839,7 +839,7 @@ namespace uk.co.rlsg.apps.changeling
                     {
                         dragSelectTime = System.DateTime.Now;
 
-                        DoDragDrop(node, DragDropEffects.Move | DragDropEffects.Scroll);
+                        DoDragDrop(node, DragDropEffects.Move | DragDropEffects.Copy | DragDropEffects.Scroll);
                     }
                 }
                 break;
@@ -879,6 +879,53 @@ namespace uk.co.rlsg.apps.changeling
             {
                 e.Effect = DragDropEffects.None;
             }
+            else if (targetNode.TreeView != subjectNode.TreeView)
+            {
+                if (xmlNodeTreeView.SelectedNode != targetNode)
+                {
+                    dragSelectTime = System.DateTime.Now;
+                    xmlNodeTreeView.SelectedNode = targetNode;
+
+                    if (subjectNode.Tag is XmlNode)
+                    {
+                        if (subjectNode.Tag is XmlText)
+                        {
+                            if (subjectNode.Parent == targetNode)
+                            {
+                                e.Effect = DragDropEffects.Copy;
+                            }
+                            else
+                            {
+                                e.Effect = DragDropEffects.None;
+                            }
+                        }
+                        else if (targetNode.Tag is XmlDocument || targetNode.Tag is XmlElement)
+                        {
+                            e.Effect = DragDropEffects.Copy;
+                        }
+                        else
+                        {
+                            e.Effect = DragDropEffects.None;
+                        }
+                    }
+                    else
+                    {
+                        e.Effect = DragDropEffects.None;
+                    }
+                }
+                else if (System.DateTime.Now.Subtract(dragSelectTime).TotalSeconds >= 1.0)
+                {
+                    dragSelectTime = System.DateTime.Now.AddSeconds(10);
+                    if (targetNode.IsExpanded)
+                    {
+                        targetNode.Collapse();
+                    }
+                    else
+                    {
+                        targetNode.Expand();
+                    }
+                }
+            }
             else
             {
                 if (xmlNodeTreeView.SelectedNode != targetNode)
@@ -892,7 +939,7 @@ namespace uk.co.rlsg.apps.changeling
                         {
                             if (subjectNode.Parent == targetNode)
                             {
-                                e.Effect = DragDropEffects.Move;
+                                e.Effect = ((e.KeyState & 8) == 0) ? DragDropEffects.Move : DragDropEffects.Copy;
                             }
                             else
                             {
@@ -901,7 +948,7 @@ namespace uk.co.rlsg.apps.changeling
                         }
                         else if (targetNode.Tag is XmlDocument || targetNode.Tag is XmlElement)
                         {
-                            e.Effect = DragDropEffects.Move;
+                            e.Effect = ((e.KeyState & 8) == 0) ? DragDropEffects.Move : DragDropEffects.Copy;
                         }
                         else
                         {
@@ -938,6 +985,7 @@ namespace uk.co.rlsg.apps.changeling
             Point targetPoint = xmlNodeTreeView.PointToClient(new Point(e.X, e.Y));
             TreeNode targetNode = xmlNodeTreeView.GetNodeAt(targetPoint);
             TreeNode subjectNode = (TreeNode)e.Data.GetData(typeof(TreeNode));
+            xmlNodeTreeView.SelectedNode = targetNode;
 
             if (targetNode == null || subjectNode == null)
             {
@@ -953,10 +1001,33 @@ namespace uk.co.rlsg.apps.changeling
                     switch (e.Effect)
                     {
                     case DragDropEffects.Move:
-                        xmlSubject.ParentNode.RemoveChild(xmlSubject);
-                        xmlTarget.AppendChild(xmlSubject);
-                        subjectNode.Remove();
-                        targetNode.Nodes.Add(subjectNode);
+                        if (targetNode.TreeView == subjectNode.TreeView)
+                        {
+                            xmlSubject.ParentNode.RemoveChild(xmlSubject);
+                            xmlTarget.AppendChild(xmlSubject);
+                            subjectNode.Remove();
+                            targetNode.Nodes.Add(subjectNode);
+                        }
+                        else
+                        {
+                            System.Media.SystemSounds.Beep.Play();
+                        }
+                        break;
+
+                    case DragDropEffects.Copy:
+                        {
+                            Cursor last = Cursor.Current;
+                            Cursor.Current = Cursors.WaitCursor;
+                            try
+                            {
+                                xmlTarget.InnerXml += xmlSubject.OuterXml;
+                                refreshSelection();
+                            }
+                            finally
+                            {
+                                Cursor.Current = last;
+                            }
+                        }
                         break;
 
                     default:

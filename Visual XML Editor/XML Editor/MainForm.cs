@@ -15,13 +15,27 @@ namespace uk.co.rlsg.apps.xml_editor
         public MainForm()
         {
             InitializeComponent();
+
+            if (Properties.Settings.Default.Plugins == null)
+            {
+                Properties.Settings.Default.Plugins = new System.Collections.Specialized.StringCollection();
+            }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private IDictionary<String, System.Xml.XmlDocument> SelectedDocuments
         {
-
+            get
+            {
+                return
+                    (from fileItem in listViewFiles.SelectedItems.OfType<ListViewItem>()
+                     where fileItem.Tag is System.Xml.XmlDocument
+                     select new
+                     {
+                         name = fileItem.Name,
+                         doc = fileItem.Tag as System.Xml.XmlDocument
+                     }).ToDictionary((_) => _.name, (_) => _.doc);
+            }
         }
-
 
         static internal void displayError(Exception err, bool fatal = false)
         {
@@ -31,11 +45,6 @@ namespace uk.co.rlsg.apps.xml_editor
         static internal void displayError(IWin32Window wnd, Exception err, bool fatal = false)
         {
             MainForm mainForm = (MainForm)Application.OpenForms["MainForm"];
-
-            /*if (mainForm != null)
-            {
-                mainForm.setStatus(Status.Fault);
-            }*/
 
             String message =
                 "Please report the following information to the author:-\n" +
@@ -55,6 +64,47 @@ namespace uk.co.rlsg.apps.xml_editor
             {
                 MessageBox.Show(wnd, message, "RECOVERABLE ERROR REPORT", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
+        }
+
+        static internal void displayError(string path, Exception err)
+        {
+            displayError(ActiveForm, path, err);
+        }
+
+        static internal void displayError(IWin32Window wnd, string path, Exception err)
+        {
+            MainForm mainForm = (MainForm)Application.OpenForms["MainForm"];
+
+            String message =
+                "Please report the following information to the plugin author:-\n" +
+                "\n    Plug-in Path: " + path +
+                "\n    Object: " + err.Source +
+                "\n    Method: " + err.TargetSite +
+                "\n    Message: " + err.Message +
+                "\n\nStack Trace\n-----------\n" + err.StackTrace;
+
+            MessageBox.Show(wnd, message, "PLUGIN LOAD ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+        }
+
+        static internal void displayError(IPlugin plugin, Exception err)
+        {
+            displayError(ActiveForm, plugin, err);
+        }
+
+        static internal void displayError(IWin32Window wnd, IPlugin plugin, Exception err)
+        {
+            MainForm mainForm = (MainForm)Application.OpenForms["MainForm"];
+
+            String message =
+                "Please report the following information to the plugin author:-\n" +
+                "\n    Plug-in Name: " + plugin.Name +
+                "\n    Plug-in Author: " + plugin.Author +
+                "\n    Object: " + err.Source +
+                "\n    Method: " + err.TargetSite +
+                "\n    Message: " + err.Message +
+                "\n\nStack Trace\n-----------\n" + err.StackTrace;
+
+            MessageBox.Show(wnd, message, "PLUGIN INTERNAL ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
         }
 
         private ListViewItem getContextMenuItem(object sender)
@@ -88,7 +138,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 }
                 else if (data is System.Xml.XmlDocument)
                 {
-                    new uk.co.rlsg.apps.changeling.XmlEditorForm(title, data as System.Xml.XmlDocument).Show(this);
+                    new uk.co.rlsg.apps.tools.XmlEditorForm(title, data as System.Xml.XmlDocument).Show(this);
                 }
                 else
                 {
@@ -123,7 +173,7 @@ namespace uk.co.rlsg.apps.xml_editor
             });
             if (newItem != null)
             {
-                var xmlDoc = new uk.co.rlsg.apps.changeling.XmlEditorForm(listLabel).get();
+                var xmlDoc = new uk.co.rlsg.apps.tools.XmlEditorForm(listLabel).get();
 
                 if (xmlDoc != null)
                 {
@@ -399,6 +449,116 @@ namespace uk.co.rlsg.apps.xml_editor
                 item.Text = e.Label;
                 listViewFiles.Sort();
                 e.CancelEdit = true;
+            }
+        }
+
+        private void pluginsManageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dlg = new PluginManagerForm();
+
+            dlg.ShowDialog();
+
+            Properties.Settings.Default.Save();
+
+            loadPlugins();
+        }
+
+        private void loadPlugins()
+        {
+            var list = pluginsToolStripMenuItem.DropDownItems;
+
+            while (list.Count > 2)
+            {
+                var item = list[2];
+
+                try
+                {
+                    if (item.Tag is IPlugin)
+                    {
+                        var plugin = item.Tag as IPlugin;
+
+                        try
+                        {
+                            plugin.Unload();
+                        }
+                        catch (Exception err)
+                        {
+                            displayError(plugin, err);
+                        }
+                    }
+                }
+                catch(Exception err)
+                {
+                    displayError(err);
+                }
+
+                list.Remove(item);
+            }
+
+            foreach (var path in Properties.Settings.Default.Plugins)
+            {
+                try
+                {
+                    var _dll = System.Reflection.Assembly.LoadFile(path);
+
+                    if (_dll != null)
+                    {
+                        var pluginList =
+                            (from _type in _dll.GetExportedTypes()
+                             where _type.IsClass && _type.IsInstanceOfType(typeof(IPlugin))
+                             orderby _type.Name
+                             select _type);
+                        foreach(var pluginType in pluginList)
+                        {
+                            var instance = _dll.CreateInstance(pluginType.Name) as IPlugin;
+                            if (instance != null)
+                            {
+                                var newPlugin = new ToolStripMenuItem
+                                {
+                                    Text = instance.Name,
+                                    ToolTipText = instance.Description,
+                                    Tag = instance,
+                                };
+
+                                newPlugin.Click += launchPlugin_Click;
+                            }
+                        }
+                    }
+                }
+                catch (Exception err)
+                {
+                    displayError(path, err);
+                }
+            }
+        }
+
+        private void launchPlugin_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (sender is ToolStripMenuItem)
+                {
+                    var pluginItem = sender as ToolStripMenuItem;
+
+
+                    if (pluginItem.Tag is IPlugin)
+                    {
+                        var plugin = pluginItem.Tag as IPlugin;
+
+                        try
+                        {
+                            plugin.Open(SelectedDocuments);
+                        }
+                        catch (Exception err)
+                        {
+                            displayError(plugin, err);
+                        }
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                displayError(err);
             }
         }
     }

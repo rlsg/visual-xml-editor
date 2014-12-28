@@ -1,4 +1,4 @@
-﻿namespace uk.co.rlsg.apps.changeling
+﻿namespace uk.co.rlsg.apps.tools
 {
     partial class XmlEditorForm
     {

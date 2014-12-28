@@ -50,6 +50,9 @@
             this.columnName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnLocation = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pluginListToolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.pluginsManageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -153,7 +156,8 @@
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.xMLDiffGeneratorToolStripMenuItem});
+            this.xMLDiffGeneratorToolStripMenuItem,
+            this.pluginsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -177,7 +181,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -219,6 +223,27 @@
             this.contextMenuStrip.Name = "contextMenuStrip";
             this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
             // 
+            // pluginsToolStripMenuItem
+            // 
+            this.pluginsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pluginsManageToolStripMenuItem,
+            this.pluginListToolStripSeparator});
+            this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
+            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.pluginsToolStripMenuItem.Text = "Plugins";
+            // 
+            // pluginListToolStripSeparator
+            // 
+            this.pluginListToolStripSeparator.Name = "pluginListToolStripSeparator";
+            this.pluginListToolStripSeparator.Size = new System.Drawing.Size(149, 6);
+            // 
+            // pluginsManageToolStripMenuItem
+            // 
+            this.pluginsManageToolStripMenuItem.Name = "pluginsManageToolStripMenuItem";
+            this.pluginsManageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pluginsManageToolStripMenuItem.Text = "Manage...";
+            this.pluginsManageToolStripMenuItem.Click += new System.EventHandler(this.pluginsManageToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -231,7 +256,6 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Visual XML Editor";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewFiles_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewFiles_DragEnter);
             this.menuStrip1.ResumeLayout(false);
@@ -263,6 +287,9 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ListView listViewFiles;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pluginsManageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator pluginListToolStripSeparator;
     }
 }
 
