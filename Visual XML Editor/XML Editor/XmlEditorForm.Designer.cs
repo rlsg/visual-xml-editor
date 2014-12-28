@@ -98,6 +98,7 @@
             this.xmlNodeTreeView.AllowDrop = true;
             this.xmlNodeTreeView.ContextMenuStrip = this.xmlNodeContextMenuStrip;
             this.xmlNodeTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.xmlNodeTreeView.FullRowSelect = true;
             this.xmlNodeTreeView.HideSelection = false;
             this.xmlNodeTreeView.LabelEdit = true;
             this.xmlNodeTreeView.Location = new System.Drawing.Point(0, 0);
@@ -292,6 +293,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "XmlEditorForm";
             this.Text = "Visual XML Editor";
+            this.Load += new System.EventHandler(this.XmlEditorForm_Load);
             this.XmlViewSplitContainer.Panel1.ResumeLayout(false);
             this.XmlViewSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.XmlViewSplitContainer)).EndInit();

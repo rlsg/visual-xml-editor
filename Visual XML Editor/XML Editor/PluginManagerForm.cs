@@ -50,6 +50,7 @@ namespace uk.co.rlsg.apps.xml_editor
                             pluginRegister.Add(fileName);
                         }
                     }
+                    pluginListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                     break;
 
                 default:

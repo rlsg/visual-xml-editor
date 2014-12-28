@@ -50,7 +50,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 Text += ": " + title;
             }
 
-            refreshTree();
+            refreshTree(true);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 Text += ": " + title;
             }
 
-            refreshTree();
+            refreshTree(true);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 Text += ": " + title;
             }
 
-            refreshTree();
+            refreshTree(true);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 Text += ": " + title;
             }
 
-            refreshTree();
+            refreshTree(true);
         }
 
         /// <summary>
@@ -185,58 +185,42 @@ namespace uk.co.rlsg.apps.xml_editor
         /// This method ensures that the tree pane containing the
         /// XML heirarchy is initialised and up to date
         /// </summary>
-        protected void refreshTree()
+        protected void refreshTree(bool force)
         {
+            Cursor last = Cursor.Current;
+            Cursor.Current = Cursors.WaitCursor;
             xmlNodeTreeView.BeginUpdate();
-            xmlNodeTreeView.Nodes.Clear();
-            TreeNode treeRoot = new TreeNode("XML");
-            treeRoot.Expand();
-
-            if (xmlNodeTreeView.Tag is XmlNode)
+            if (force || xmlNodeTreeView.SelectedNode == null)
             {
-                XmlNode root=xmlNodeTreeView.Tag as XmlNode;
+                xmlNodeTreeView.Nodes.Clear();
+                TreeNode treeRoot = new TreeNode("XML");
+                treeRoot.Expand();
 
-                populateTree(root.ChildNodes, treeRoot.Nodes);
-
-                if (!xmlNodeSourceTextBox.Focused)
+                if (xmlNodeTreeView.Tag is XmlNode)
                 {
-                    xmlNodeSourceTextBox.Tag = null;
-                    xmlNodeSourceTextBox.Text = root.InnerXml;
-                    xmlNodeSourceTextBox.Tag = root;
+                    XmlNode root = xmlNodeTreeView.Tag as XmlNode;
+
+                    populateTree(root.ChildNodes, treeRoot.Nodes);
                 }
-            }
 
-            xmlNodeTreeView.Nodes.Add(treeRoot);
-            xmlNodeTreeView.EndUpdate();
-        }
-
-        /// <summary>
-        /// This method ensures that the current selected sub-tree
-        /// of the XML heirarchy is up to date following an edit
-        /// operation.
-        /// </summary>
-        protected void refreshSelection()
-        {
-            if (xmlNodeTreeView.SelectedNode == null)
-            {
-                refreshTree();
+                xmlNodeTreeView.Nodes.Add(treeRoot);
             }
             else
             {
-                xmlNodeTreeView.BeginUpdate();
-                xmlNodeTreeView.SelectedNode.Nodes.Clear();
+                var subTreeRoot = xmlNodeTreeView.SelectedNode;
+                
+                subTreeRoot.Nodes.Clear();
+                subTreeRoot.Expand();
 
-                XmlNode root = xmlNodeTreeView.SelectedNode.Tag as XmlNode;
-
-                populateTree(root.ChildNodes, xmlNodeTreeView.SelectedNode.Nodes);
-                if (!xmlNodeSourceTextBox.Focused)
+                if (subTreeRoot.Tag is XmlNode)
                 {
-                    xmlNodeSourceTextBox.Tag = null;
-                    xmlNodeSourceTextBox.Text = root.InnerXml;
-                    xmlNodeSourceTextBox.Tag = root;
+                    XmlNode root = xmlNodeTreeView.Tag as XmlNode;
+
+                    populateTree(root.ChildNodes, subTreeRoot.Nodes);
                 }
-                xmlNodeTreeView.EndUpdate();
             }
+            xmlNodeTreeView.EndUpdate();
+            Cursor.Current = last;
         }
 
         /// <summary>
@@ -247,8 +231,6 @@ namespace uk.co.rlsg.apps.xml_editor
         /// <param name="treeNodeCollection">The TreeView node list that will display the given XML</param>
         private void populateTree(XmlNodeList xmlNodeList, TreeNodeCollection treeNodeCollection)
         {
-            Cursor last = Cursor.Current;
-            Cursor.Current = Cursors.WaitCursor;
             try
             {
                 foreach (XmlNode xmlNode in xmlNodeList)
@@ -272,107 +254,75 @@ namespace uk.co.rlsg.apps.xml_editor
             catch (Exception)
             {
             }
-            Cursor.Current = last;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void XmlNodeTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        /// <param name="xmlNode"></param>
+        protected void refreshDetails(XmlNode xmlNode)
         {
-            Cursor last = Cursor.Current;
-            Cursor.Current = Cursors.WaitCursor;
             try
             {
                 xmlAttributesListView.Tag = null;
                 xmlAttributesListView.Items.Clear();
 
-                xmlNodeTextTextBox.Tag = null;
                 xmlNodeTextTextBox.ReadOnly = true;
+                xmlNodeTextTextBox.Tag = null;
                 xmlNodeTextTextBox.Text = "";
+                xmlNodeTextTextBox.BackColor = Color.LightGray;
 
-                xmlNodeSourceTextBox.Tag = null;
-                xmlNodeSourceTextBox.ReadOnly = true;
-                xmlNodeSourceTextBox.Text = "";
-
-                if (e.Node != null)
+                if (xmlNode != null)
                 {
-                    XmlNode xmlNode = e.Node.Tag as XmlNode;
-
-                    if (e.Node.Tag == null)
+                    if (!xmlNode.HasChildNodes)
                     {
-                        xmlNode = xmlNodeTreeView.Tag as XmlNode;
+                        if (xmlNode is XmlComment || xmlNode is XmlText)
+                        {
+                            xmlNodeTextTextBox.Tag = xmlNode;
+                            xmlNodeTextTextBox.Text = xmlNode.InnerText;
+                            xmlNodeTextTextBox.ReadOnly = false;
+                            xmlNodeTextTextBox.BackColor = Color.White;
+                        }
                     }
 
-                    if (xmlNode != null)
+                    xmlAttributesListView.Enabled = true;
+                    xmlAttributesListView.BackColor = Color.White;
+                    xmlAttributesListView.Tag = xmlNode;
+                    if (xmlNode is XmlDeclaration)
                     {
-                        if (xmlNodeTabControl.SelectedTab==xmlNodeSourceTab)
+                        XmlDeclaration xmlDecl = xmlNode as XmlDeclaration;
+
+                        xmlAttributesListView.Items.Add(new ListViewItem(new string[] {
+                            "XML Version",
+                            xmlDecl.Version
+                        }));
+
+                        xmlAttributesListView.Items.Add(new ListViewItem(new string[] {
+                            "Encoding",
+                            xmlDecl.Encoding
+                        }));
+
+                        xmlAttributesListView.Items.Add(new ListViewItem(new string[] {
+                            "Standalone",
+                            xmlDecl.Standalone
+                        }));
+                    }
+                    else if (xmlNode is XmlElement)
+                    {
+                        foreach (XmlAttribute xmlAttr in xmlNode.Attributes)
                         {
-                            xmlNodeSourceTextBox.Text = xmlNode.InnerXml;
-                            xmlNodeSourceTextBox.Tag = xmlNode;
-                            xmlNodeSourceTextBox.ReadOnly = false;
-                        }
+                            ListViewItem item = new ListViewItem(new String[] { xmlAttr.Name, xmlAttr.Value });
 
-                        if (!xmlNode.HasChildNodes)
-                        {
-                            if (xmlNode is XmlComment || xmlNode is XmlText)
-                            {
-                                xmlNodeTextTextBox.Text = xmlNode.InnerText;
-                                xmlNodeTextTextBox.Tag = xmlNode;
-                                xmlNodeTextTextBox.ReadOnly = false;
-                            }
-                        }
+                            item.Tag = xmlAttr;
+                            item.Text = xmlAttr.LocalName;
 
-                        xmlAttributesListView.Enabled = true;
-                        xmlAttributesListView.Tag = xmlNode;
-                        if (xmlNode is XmlDeclaration)
-                        {
-                            XmlDeclaration xmlDecl = xmlNode as XmlDeclaration;
-
-                            xmlAttributesListView.Items.Add(new ListViewItem(new string[] {
-                                "XML Version",
-                                xmlDecl.Version
-                            }));
-
-                            xmlAttributesListView.Items.Add(new ListViewItem(new string[] {
-                                "Encoding",
-                                xmlDecl.Encoding
-                            }));
-
-                            xmlAttributesListView.Items.Add(new ListViewItem(new string[] {
-                                "Standalone",
-                                xmlDecl.Standalone
-                            }));
-                        }
-                        else if (xmlNode is XmlElement)
-                        {
-                            foreach (XmlAttribute xmlAttr in xmlNode.Attributes)
-                            {
-                                ListViewItem item = new ListViewItem(new String [] {xmlAttr.Name, xmlAttr.Value});
-
-                                item.Tag = xmlAttr;
-                                item.Text = xmlAttr.LocalName;
-
-                                xmlAttributesListView.Items.Add(item);
-                            }
-                        }
-                        else
-                        {
-                            xmlAttributesListView.Enabled = false;
+                            xmlAttributesListView.Items.Add(item);
                         }
                     }
-                }
-                else if (xmlNodeTabControl.SelectedTab == xmlNodeSourceTab)
-                {
-                    if (xmlNodeTreeView.Tag is XmlNode)
+                    else
                     {
-                        XmlNode root = xmlNodeTreeView.Tag as XmlNode;
-
-                        xmlNodeSourceTextBox.Text = root.InnerXml;
-                        xmlNodeSourceTextBox.Tag = root;
-                        xmlNodeSourceTextBox.ReadOnly = false;
+                        xmlAttributesListView.Enabled = false;
+                        xmlAttributesListView.BackColor = Color.LightGray;
                     }
                 }
 
@@ -388,6 +338,64 @@ namespace uk.co.rlsg.apps.xml_editor
             catch (Exception)
             {
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xmlNode"></param>
+        protected void refreshSource(XmlNode xmlNode)
+        {
+            try
+            {
+                xmlNodeSourceTextBox.ReadOnly = true;
+                xmlNodeSourceTextBox.Tag = null;
+                xmlNodeSourceTextBox.Text = "";
+                xmlNodeSourceTextBox.BackColor = Color.LightGray;
+
+                if (xmlNode != null)
+                {
+                    if (xmlNodeTabControl.SelectedTab == xmlNodeSourceTab)
+                    {
+                        xmlNodeSourceTextBox.Tag = xmlNode;
+                        xmlNodeSourceTextBox.Text = xmlNode.InnerXml;
+                        if (!(xmlNode is XmlComment ||
+                              xmlNode is XmlText ||
+                              xmlNode is XmlDeclaration ||
+                              xmlNode.IsReadOnly))
+                        {
+                            xmlNodeSourceTextBox.ReadOnly = false;
+                            xmlNodeSourceTextBox.BackColor = Color.White;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void XmlNodeTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            Cursor last = Cursor.Current;
+            Cursor.Current = Cursors.WaitCursor;
+            XmlNode xmlNode = null;
+            if (e.Node != null)
+            {
+                xmlNode = e.Node.Tag as XmlNode;
+
+                if (e.Node.Tag == null)
+                {
+                    xmlNode = xmlNodeTreeView.Tag as XmlNode;
+                }
+            }
+            refreshDetails(xmlNode);
+            refreshSource(xmlNode);
             Cursor.Current = last;
         }
 
@@ -398,11 +406,14 @@ namespace uk.co.rlsg.apps.xml_editor
         /// <param name="e"></param>
         private void xmlNodeTextTextBox_TextChanged(object sender, EventArgs e)
         {
-            if (xmlNodeTextTextBox.Tag is XmlNode)
+            if (!xmlNodeTextTextBox.ReadOnly)
             {
-                XmlNode xmlNode=xmlNodeTextTextBox.Tag as XmlNode;
+                if (xmlNodeTextTextBox.Tag is XmlNode)
+                {
+                    XmlNode xmlNode = xmlNodeTextTextBox.Tag as XmlNode;
 
-                xmlNode.InnerText = xmlNodeTextTextBox.Text;
+                    xmlNode.InnerText = xmlNodeTextTextBox.Text;
+                }
             }
         }
 
@@ -413,19 +424,34 @@ namespace uk.co.rlsg.apps.xml_editor
         /// <param name="e"></param>
         private void xmlNodeSourceTextBox_TextChanged(object sender, EventArgs e)
         {
-            if (xmlNodeSourceTextBox.Tag is XmlDocument)
+            if (!xmlNodeSourceTextBox.ReadOnly)
             {
-                doc.InnerXml = xmlNodeSourceTextBox.Text;
+                try
+                {
+                    if (xmlNodeSourceTextBox.Tag is XmlDocument)
+                    {
+                        doc.InnerXml = xmlNodeSourceTextBox.Text;
 
-                refreshTree();
+                        refreshTree(true);
+                    }
+                    else if (xmlNodeSourceTextBox.Tag is XmlNode)
+                    {
+                        XmlNode xmlNode = xmlNodeSourceTextBox.Tag as XmlNode;
+
+                        xmlNode.InnerXml = xmlNodeSourceTextBox.Text;
+
+                        refreshTree(false);
+                    }
+                    xmlNodeSourceTextBox.BackColor = Color.White;
+                }
+                catch (XmlException)
+                {
+                    xmlNodeSourceTextBox.BackColor = Color.LightPink;
+                }
             }
-            else if (xmlNodeSourceTextBox.Tag is XmlNode)
+            else
             {
-                XmlNode xmlNode = xmlNodeSourceTextBox.Tag as XmlNode;
-
-                xmlNode.InnerXml = xmlNodeSourceTextBox.Text;
-
-                refreshSelection();
+                xmlNodeSourceTextBox.BackColor = Color.LightGray;
             }
         }
 
@@ -440,31 +466,7 @@ namespace uk.co.rlsg.apps.xml_editor
             {
                 Cursor last = Cursor.Current;
                 Cursor.Current = Cursors.WaitCursor;
-                try
-                {
-                    if (xmlNodeSourceTextBox.Tag == null)
-                    {
-                        if (xmlAttributesListView.Tag is XmlNode)
-                        {
-                            XmlNode xmlNode = xmlAttributesListView.Tag as XmlNode;
-
-                            xmlNodeSourceTextBox.Text = xmlNode.InnerXml;
-                            xmlNodeSourceTextBox.Tag = xmlNode;
-                            xmlNodeSourceTextBox.ReadOnly = false;
-                        }
-                        else if (xmlNodeTreeView.Tag is XmlNode)
-                        {
-                            XmlNode root = xmlNodeTreeView.Tag as XmlNode;
-
-                            xmlNodeSourceTextBox.Text = root.InnerXml;
-                            xmlNodeSourceTextBox.Tag = root;
-                            xmlNodeSourceTextBox.ReadOnly = false;
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                }
+                refreshSource(xmlNodeSourceTab.Tag as XmlNode);
                 Cursor.Current = last;
             }
         }
@@ -538,7 +540,7 @@ namespace uk.co.rlsg.apps.xml_editor
                         if (newDecl != decl)
                         {
                             doc.ReplaceChild(newDecl, decl);
-                            refreshTree();
+                            refreshTree(true);
                         }
                         break;
                     }
@@ -620,6 +622,7 @@ namespace uk.co.rlsg.apps.xml_editor
             xmlNodeSourceTextBox.ReadOnly = true;
             xmlNodeSourceTextBox.Tag = null;
             xmlNodeSourceTextBox.Text = "";
+            xmlNodeSourceTextBox.BackColor = Color.LightGray;
         }
 
         /// <summary>
@@ -772,6 +775,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 newTreeNode.Text = newXmlNode.LocalName;
 
                 xmlNodeTreeView.SelectedNode.Nodes.Add(newTreeNode);
+                refreshSource(node);
             }
         }
 
@@ -795,6 +799,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 newTreeNode.Text = newXmlNode.LocalName;
 
                 xmlNodeTreeView.SelectedNode.Nodes.Add(newTreeNode);
+                refreshSource(node);
             }
         }
 
@@ -818,6 +823,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 newTreeNode.Text = newXmlNode.LocalName;
 
                 xmlNodeTreeView.SelectedNode.Nodes.Add(newTreeNode);
+                refreshSource(node);
             }
         }
 
@@ -1007,6 +1013,7 @@ namespace uk.co.rlsg.apps.xml_editor
                             xmlTarget.AppendChild(xmlSubject);
                             subjectNode.Remove();
                             targetNode.Nodes.Add(subjectNode);
+                            refreshSource(xmlTarget);
                         }
                         else
                         {
@@ -1021,7 +1028,8 @@ namespace uk.co.rlsg.apps.xml_editor
                             try
                             {
                                 xmlTarget.InnerXml += xmlSubject.OuterXml;
-                                refreshSelection();
+                                refreshTree(false);
+                                refreshSource(xmlTarget);
                             }
                             finally
                             {
@@ -1111,6 +1119,11 @@ namespace uk.co.rlsg.apps.xml_editor
                 e.CancelEdit = true;
                 System.Media.SystemSounds.Beep.Play();
             }
+        }
+
+        private void XmlEditorForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

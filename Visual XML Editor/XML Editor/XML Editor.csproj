@@ -26,8 +26,8 @@
     <ProductName>Visual XML Editor</ProductName>
     <PublisherName>Roger L.S. Griffiths</PublisherName>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>18</ApplicationRevision>
-    <ApplicationVersion>1.0.3.%2a</ApplicationVersion>
+    <ApplicationRevision>19</ApplicationRevision>
+    <ApplicationVersion>1.0.4.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
