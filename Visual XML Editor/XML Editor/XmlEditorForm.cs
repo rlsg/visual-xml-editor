@@ -21,6 +21,7 @@ namespace uk.co.rlsg.apps.xml_editor
     {
         private DateTime dragSelectTime = System.DateTime.Now;
         protected XmlDocument doc;
+        private XmlEditorFormSearch dlgSearch; 
 
         /// <summary>
         /// This constructor allows for the creation of a
@@ -50,6 +51,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 Text += ": " + title;
             }
 
+            dlgSearch = new XmlEditorFormSearch(title, xmlNodeTreeView);
             refreshTree(true);
         }
 
@@ -80,6 +82,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 Text += ": " + title;
             }
 
+            dlgSearch = new XmlEditorFormSearch(title, xmlNodeTreeView);
             refreshTree(true);
         }
 
@@ -110,6 +113,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 Text += ": " + title;
             }
 
+            dlgSearch = new XmlEditorFormSearch(title, xmlNodeTreeView);
             refreshTree(true);
         }
 
@@ -143,6 +147,7 @@ namespace uk.co.rlsg.apps.xml_editor
                 Text += ": " + title;
             }
 
+            dlgSearch = new XmlEditorFormSearch(title, xmlNodeTreeView);
             refreshTree(true);
         }
 
@@ -1121,7 +1126,22 @@ namespace uk.co.rlsg.apps.xml_editor
             }
         }
 
-        private void XmlEditorForm_Load(object sender, EventArgs e)
+        private void searchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dlgSearch.Show(this);
+        }
+
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }

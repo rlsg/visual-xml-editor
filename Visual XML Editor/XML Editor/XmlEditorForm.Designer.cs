@@ -51,6 +51,12 @@
             this.xmlNodeTextTextBox = new System.Windows.Forms.TextBox();
             this.xmlNodeSourceTab = new System.Windows.Forms.TabPage();
             this.xmlNodeSourceTextBox = new System.Windows.Forms.TextBox();
+            this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             Attribute = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             Value = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.XmlViewSplitContainer)).BeginInit();
@@ -118,9 +124,15 @@
             // 
             this.xmlNodeContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.searchToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.cutToolStripMenuItem,
+            this.copyToolStripMenuItem,
+            this.pasteToolStripMenuItem,
             this.deleteXmlNodeToolStripMenuItem});
             this.xmlNodeContextMenuStrip.Name = "xmlNodeContextMenuStrip";
-            this.xmlNodeContextMenuStrip.Size = new System.Drawing.Size(108, 48);
+            this.xmlNodeContextMenuStrip.Size = new System.Drawing.Size(119, 148);
             this.xmlNodeContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.xmlNodeContextMenuStrip_Opening);
             // 
             // addToolStripMenuItem
@@ -130,34 +142,34 @@
             this.addCommentXmlNodeToolStripMenuItem,
             this.addElementXmlNodeToolStripMenuItem});
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-            this.addToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.addToolStripMenuItem.Text = "Add";
             // 
             // addTextXmlNodeToolStripMenuItem
             // 
             this.addTextXmlNodeToolStripMenuItem.Name = "addTextXmlNodeToolStripMenuItem";
-            this.addTextXmlNodeToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.addTextXmlNodeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.addTextXmlNodeToolStripMenuItem.Text = "#text";
             this.addTextXmlNodeToolStripMenuItem.Click += new System.EventHandler(this.addTextXmlNodeToolStripMenuItem_Click);
             // 
             // addCommentXmlNodeToolStripMenuItem
             // 
             this.addCommentXmlNodeToolStripMenuItem.Name = "addCommentXmlNodeToolStripMenuItem";
-            this.addCommentXmlNodeToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.addCommentXmlNodeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.addCommentXmlNodeToolStripMenuItem.Text = "#comment";
             this.addCommentXmlNodeToolStripMenuItem.Click += new System.EventHandler(this.addCommentXmlNodeToolStripMenuItem_Click);
             // 
             // addElementXmlNodeToolStripMenuItem
             // 
             this.addElementXmlNodeToolStripMenuItem.Name = "addElementXmlNodeToolStripMenuItem";
-            this.addElementXmlNodeToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.addElementXmlNodeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.addElementXmlNodeToolStripMenuItem.Text = "Element";
             this.addElementXmlNodeToolStripMenuItem.Click += new System.EventHandler(this.addElementXmlNodeToolStripMenuItem_Click);
             // 
             // deleteXmlNodeToolStripMenuItem
             // 
             this.deleteXmlNodeToolStripMenuItem.Name = "deleteXmlNodeToolStripMenuItem";
-            this.deleteXmlNodeToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.deleteXmlNodeToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.deleteXmlNodeToolStripMenuItem.Text = "Delete";
             this.deleteXmlNodeToolStripMenuItem.Click += new System.EventHandler(this.deleteXmlNodeToolStripMenuItem_Click);
             // 
@@ -284,6 +296,47 @@
             this.xmlNodeSourceTextBox.TabIndex = 0;
             this.xmlNodeSourceTextBox.TextChanged += new System.EventHandler(this.xmlNodeSourceTextBox_TextChanged);
             // 
+            // searchToolStripMenuItem
+            // 
+            this.searchToolStripMenuItem.Name = "searchToolStripMenuItem";
+            this.searchToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.searchToolStripMenuItem.Text = "Search...";
+            this.searchToolStripMenuItem.Click += new System.EventHandler(this.searchToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(115, 6);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(115, 6);
+            // 
+            // cutToolStripMenuItem
+            // 
+            this.cutToolStripMenuItem.Enabled = false;
+            this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.cutToolStripMenuItem.Text = "Cut";
+            this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Enabled = false;
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.copyToolStripMenuItem.Text = "Copy";
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+            // 
+            // pasteToolStripMenuItem
+            // 
+            this.pasteToolStripMenuItem.Enabled = false;
+            this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.pasteToolStripMenuItem.Text = "Paste";
+            this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
+            // 
             // XmlEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -293,7 +346,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "XmlEditorForm";
             this.Text = "Visual XML Editor";
-            this.Load += new System.EventHandler(this.XmlEditorForm_Load);
             this.XmlViewSplitContainer.Panel1.ResumeLayout(false);
             this.XmlViewSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.XmlViewSplitContainer)).EndInit();
@@ -334,5 +386,11 @@
         private System.Windows.Forms.ToolStripMenuItem addCommentXmlNodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addElementXmlNodeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteXmlNodeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem cutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
     }
 }
