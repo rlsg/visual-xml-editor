@@ -39,9 +39,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Visual XML Editor, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\AppData\Local\Apps\2.0\0XXAXQ70.EEH\0YPTNDYP.ON4\visu..tion_0b6274c5e49f63c6_0001.0000_8c1cce67712297bb\Visual XML Editor.exe</HintPath>
+    <Reference Include="Visual XML Editor">
+      <HintPath>..\..\..\..\..\..\AppData\Local\Apps\2.0\0XXAXQ70.EEH\0YPTNDYP.ON4\visu..tion_0b6274c5e49f63c6_0001.0000_51fa7c6ec261447b\Visual XML Editor.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

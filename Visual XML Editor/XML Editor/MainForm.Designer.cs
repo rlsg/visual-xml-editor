@@ -256,7 +256,6 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Visual XML Editor";
-            this.Load += new System.EventHandler(this.MainForm_Load);
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewFiles_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.listViewFiles_DragEnter);

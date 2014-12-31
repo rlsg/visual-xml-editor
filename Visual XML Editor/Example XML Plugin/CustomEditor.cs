@@ -19,7 +19,20 @@ namespace uk.co.rlsg.apps.example_xml_plugin
             {
                 Text += " : " + title;
             }
-            richTextBox.Text = doc.InnerXml;
+            var builder = new StringBuilder();
+            var settings = new System.Xml.XmlWriterSettings()
+                {
+                    Async = false,
+                    Indent = true,
+                    NewLineHandling = System.Xml.NewLineHandling.Replace,
+                    NewLineOnAttributes = false
+                };
+            using (var writer = System.Xml.XmlWriter.Create(builder, settings))
+            {
+                doc.Save(writer);
+                writer.Flush();
+            };
+            richTextBox.Text = builder.ToString();
             richTextBox.Tag = doc;
         }
 
@@ -43,7 +56,19 @@ namespace uk.co.rlsg.apps.example_xml_plugin
 
         private void richTextBox_TextChanged(object sender, EventArgs e)
         {
-
+            if (richTextBox.Tag is System.Xml.XmlDocument)
+            {
+                var doc = richTextBox.Tag as System.Xml.XmlDocument;
+                try
+                {
+                    doc.InnerXml = richTextBox.Text;
+                    richTextBox.BackColor = Color.White;
+                }
+                catch (System.Xml.XmlException)
+                {
+                    richTextBox.BackColor = Color.LightPink;
+                }
+            }
         }
 
         private void CustomEditor_FormClosing(object sender, FormClosingEventArgs e)
