@@ -15,6 +15,16 @@ namespace uk.co.rlsg.apps.xml_editor
     /// </summary>
     public partial class MainForm : Form
     {
+        private System.Xml.XmlWriterSettings xmlSettings = new System.Xml.XmlWriterSettings()
+        {
+            Indent = true,
+            IndentChars = "",
+            NewLineChars = "\n",
+            NewLineOnAttributes = false,
+            NewLineHandling = System.Xml.NewLineHandling.None,
+            OmitXmlDeclaration = false
+        };
+
         #region Error Reporting
         #region Main Application Errors
         /// <summary>
@@ -457,6 +467,18 @@ namespace uk.co.rlsg.apps.xml_editor
             {
                 Properties.Settings.Default.Plugins = new System.Collections.Specialized.StringCollection();
             }
+
+            xmlSettings.Indent = Properties.Settings.Default.XML_Indent;
+            xmlSettings.NewLineOnAttributes = Properties.Settings.Default.XML_NewLineOnAttributes;
+            xmlSettings.IndentChars = Properties.Settings.Default.XML_IndentChars;
+            if (Properties.Settings.Default.EOL_UNIX)
+            {
+                xmlSettings.NewLineChars = "\n";
+            }
+            else
+            {
+                xmlSettings.NewLineChars = "\r\n";
+            }
         }
 
         /// <summary>
@@ -566,7 +588,7 @@ namespace uk.co.rlsg.apps.xml_editor
                                     }
                                     file.MoveTo(backupFileName);
                                 }
-                                xmlDoc.Save(fileName);
+                                using (var writer = System.Xml.XmlWriter.Create(fileName, xmlSettings)) xmlDoc.Save(writer);
                             }
                             else
                             {
@@ -580,7 +602,7 @@ namespace uk.co.rlsg.apps.xml_editor
                                 switch (dlg.ShowDialog(this))
                                 {
                                     case System.Windows.Forms.DialogResult.OK:
-                                        xmlDoc.Save(dlg.FileName);
+                                        using (var writer = System.Xml.XmlWriter.Create(dlg.FileName, xmlSettings)) xmlDoc.Save(writer);
                                         path.Text = dlg.FileName;
                                         break;
                                 }
@@ -629,7 +651,7 @@ namespace uk.co.rlsg.apps.xml_editor
                             switch (dlg.ShowDialog(this))
                             {
                                 case System.Windows.Forms.DialogResult.OK:
-                                    xmlDoc.Save(dlg.FileName);
+                                    using (var writer = System.Xml.XmlWriter.Create(dlg.FileName, xmlSettings)) xmlDoc.Save(writer);
                                     path.Text = dlg.FileName;
                                     break;
                             }
@@ -641,6 +663,27 @@ namespace uk.co.rlsg.apps.xml_editor
                     }
                 }
             }
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dlg = new XmlSettingsForm(xmlSettings);
+            dlg.ShowDialog();
+
+            Properties.Settings.Default.XML_Indent = xmlSettings.Indent;
+            Properties.Settings.Default.XML_NewLineOnAttributes = xmlSettings.NewLineOnAttributes;
+            Properties.Settings.Default.XML_IndentChars = xmlSettings.IndentChars;
+            switch (xmlSettings.NewLineChars)
+            {
+                case "\n":
+                    Properties.Settings.Default.EOL_UNIX = true;
+                    break;
+
+                default:
+                    Properties.Settings.Default.EOL_UNIX = false;
+                    break;
+            }
+            Properties.Settings.Default.Save();
         }
 
         /// <summary>

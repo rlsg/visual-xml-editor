@@ -26,8 +26,8 @@
     <ProductName>Visual XML Editor</ProductName>
     <PublisherName>Roger L.S. Griffiths</PublisherName>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>22</ApplicationRevision>
-    <ApplicationVersion>1.0.6.%2a</ApplicationVersion>
+    <ApplicationRevision>23</ApplicationRevision>
+    <ApplicationVersion>1.0.7.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -126,6 +126,12 @@
     <Compile Include="XmlEditorFormSearch.Designer.cs">
       <DependentUpon>XmlEditorFormSearch.cs</DependentUpon>
     </Compile>
+    <Compile Include="XmlSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="XmlSettingsForm.Designer.cs">
+      <DependentUpon>XmlSettingsForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -153,6 +159,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="XmlEditorFormSearch.resx">
       <DependentUpon>XmlEditorFormSearch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="XmlSettingsForm.resx">
+      <DependentUpon>XmlSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
