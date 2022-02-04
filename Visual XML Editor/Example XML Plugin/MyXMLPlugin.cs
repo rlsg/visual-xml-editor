@@ -26,7 +26,7 @@ namespace uk.co.rlsg.apps.example_xml_plugin
 
         public override string Author
         {
-            get { return "Roger L.S. Griffiths"; }
+            get { return "S. Lenna R. Griffiths"; }
         }
 
         private Dictionary<string, CustomEditor> openEditors = new Dictionary<string,CustomEditor>();
