@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Users\Roger L.S. Griffiths\Google Drive\Fun Stuff\Visual XML Editor\</PublishUrl>
+    <PublishUrl>%TEMP%\Publish\Visual XML Editor\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -24,7 +24,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <SupportUrl>https://code.google.com/p/visual-xml-editor/</SupportUrl>
     <ProductName>Visual XML Editor</ProductName>
-    <PublisherName>Roger L.S. Griffiths</PublisherName>
+    <PublisherName>S. Lenna R. Griffiths</PublisherName>
     <AutorunEnabled>true</AutorunEnabled>
     <ApplicationRevision>23</ApplicationRevision>
     <ApplicationVersion>1.0.7.%2a</ApplicationVersion>
